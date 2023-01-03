@@ -13,7 +13,18 @@
     "test:coverage": "jest --coverage",
     "clean": "rimraf dist"
   },
-  "author": "",
+  "author": "Elie Samuel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bashlor/Week-Data-Structure"
+  },
+  "bugs": {
+    "url": "https://github.com/bashlor/week-data-structure/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
   "license": "MIT",
   "files": [
     "src",
