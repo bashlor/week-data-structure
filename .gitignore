@@ -114,3 +114,6 @@ dist
 # IDE
 .vscode
 .idea
+
+# Turbo
+.turbo
