@@ -14,10 +14,14 @@
   </a>
 </p>
 
-> A tiny package for manage tasks and events during a week. Inspired from [week-ranger](https://github.com/GlCap/week-ranger) package.
+> A tiny package for manage timeslots, tasks and events during a week. Inspired from [week-ranger](https://github.com/GlCap/week-ranger) package.
 
-> WARNING : This project is still in development. Methods and classes can change at any time.
+> WARNING : This project is still in development. Methods and classes can change at any time. A package will be published soon.
 
+## Purpose
+
+- Provide a simple way to manage events and tasks in a week or a day. For example, you can create a week object and add tasks to it. Then, you can retrieve all events later. The consistency of the data is guaranteed by the package.
+- Provide a simple way to handle time slots, and time slots series. Quick parsing and manipulation of time slots.
 
 
 ## Prerequisites
