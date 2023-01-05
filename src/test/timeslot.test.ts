@@ -226,7 +226,7 @@ describe('Timeslot class', () => {
       const timeslot = Timeslot.fromString('06:00-11:00');
       const timeslot2 = Timeslot.fromString('08:00-10:00');
 
-      const [merged, rest] = Timeslot.mergeTimeslotIntersection(timeslot, timeslot2);
+      const rest = Timeslot.mergeTimeslotIntersection(timeslot, timeslot2)[1];
       expect(rest.length).toStrictEqual(2);
       expect(
         rest.find((timeslot) => timeslot.equals(new Timeslot([Time.fromString('06:00'), Time.fromString('08:00')]))),

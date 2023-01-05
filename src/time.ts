@@ -2,6 +2,7 @@ import { computeMinutes, totalMinutesToTimeHours, totalMinutesToTimeMinutes } fr
 import { MINUTES_DAY, TIME_SEPARATOR } from './constant/time.constant';
 import { TimeSerializable } from './type/time.type';
 import { WeekManagerError } from './error/week-manager.error';
+import { parseIntegerOrThrow } from './util/function.util';
 
 export class Time {
   private readonly globalMinutes: number;
@@ -108,12 +109,14 @@ export class Time {
       throw new WeekManagerError(value, 'Time');
     }
 
-    const hours = Number.parseInt(rawHours);
-    const minutes = Number.parseInt(rawMinutes);
+    const hours = parseIntegerOrThrow(rawHours, new WeekManagerError(value, 'Time'));
+    const minutes = parseIntegerOrThrow(rawMinutes, new WeekManagerError(value, 'Time'));
 
-    if (hours >= 24 || minutes >= 60) {
+    if (hours < 0 || minutes < 0) {
       throw new WeekManagerError(value, 'Time');
     }
+
+
 
     return new Time({ hours, minutes });
   }
