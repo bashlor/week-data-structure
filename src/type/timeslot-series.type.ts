@@ -1,5 +1,5 @@
 import { TimeslotSerializable } from './timeslot.type';
 
-export interface TimeslotSerieSerializable {
+export interface TimeslotSeriesSerializable {
   timeslots: Array<TimeslotSerializable>;
 }

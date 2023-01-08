@@ -9,5 +9,6 @@ module.exports = {
   moduleFileExtensions: ['js', 'json', 'ts'],
   coverageDirectory: './coverage',
   collectCoverage: true,
-  coverageReporters: ['html', 'json', 'lcov', 'text', 'clover'],
+  coverageReporters: ['html'],
+  testPathIgnorePatterns: ['/node_modules/', '/dist/'],
 };

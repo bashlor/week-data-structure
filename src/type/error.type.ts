@@ -1,1 +1,1 @@
-export type ErrorType = 'Day' | 'Time' | 'Timeslot' | 'TimeslotSerie';
+export type ErrorType = 'Day' | 'Time' | 'Timeslot' | 'TimeslotSeries';

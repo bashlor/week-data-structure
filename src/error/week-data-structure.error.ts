@@ -1,6 +1,6 @@
 import { ErrorType } from '../type/error.type';
 
-export class WeekManagerError extends Error {
+export class WeekDataStructureError extends Error {
   private readonly TIME_FORMAT = `[0 <= HH < 24, 0 <= MM < 60]\nHH:MM`;
   private readonly RANGE_FORMAT = `${this.TIME_FORMAT}-${this.TIME_FORMAT}`;
   private readonly RANGE_CHAIN_FORMAT = `${this.RANGE_FORMAT},${this.RANGE_FORMAT},${this.RANGE_FORMAT},...`;
@@ -20,7 +20,7 @@ export class WeekManagerError extends Error {
       case 'Timeslot':
         this.message = this.parseMessage(type, this.RANGE_FORMAT, messageOrValue);
         break;
-      case 'TimeslotSerie':
+      case 'TimeslotSeries':
         this.message = this.parseMessage(type, this.RANGE_CHAIN_FORMAT, messageOrValue);
         break;
       case 'Day':
