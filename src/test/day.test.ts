@@ -285,7 +285,7 @@ describe('Day class', () => {
     });
 
     it('day', () => {
-      expect(monday.day).toBe("monday");
+      expect(monday.day).toBe('monday');
     });
 
     it('timeslots', () => {
@@ -302,12 +302,6 @@ describe('Day class', () => {
     it('specs', () => {
       expect(monday.specs).toBeDefined();
     });
-  });
-
-  describe('set', () => {
-    it('should throw an error if the timeslot is over or under the  defined limit', () => {});
-
-    it('should throw an error if the timeslot is overlapping another one', () => {});
   });
 
   describe('insert', () => {
