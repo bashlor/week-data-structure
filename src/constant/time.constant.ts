@@ -6,4 +6,4 @@ export const TIME_SEPARATOR = ':';
 export const INTERVAL_TIME_SEPARATOR = '-';
 export const TIMESLOT_SERIES_SEPARATOR = ',';
 export const DAY_TIME_SEPARATOR = ';';
-export const WEEK_SEPARATOR = '\n';
+export const WEEK_SEPARATOR = '|';
