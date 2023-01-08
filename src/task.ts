@@ -1,35 +1,34 @@
-import { TaskDescriptor } from './type/task.util';
 import { randomUUID } from 'crypto';
 
-export class Task {
-  private readonly _key: string;
-  private readonly _id: number;
-  private readonly _name: string;
-  private readonly _domain: string;
-  private readonly _description: string;
+export class Task<T> {
+  private readonly _id: string;
+  private readonly _data: T;
 
-  constructor(name: string, domain: string, description: string) {
-    this._key = randomUUID();
-    this._id = Task.getId().next().value as number;
-    this._name = name;
-    this._domain = domain;
-    this._description = description;
+  constructor(data: T) {
+    this._id = randomUUID();
+    this._data = data;
   }
 
-  private static *getId() {
-    let count = 0;
-    while (true) {
-      yield count++;
-    }
+  static empty<T>(): Task<T> {
+    return new Task<T>(null);
   }
 
-  toJSON(): TaskDescriptor {
+  get id(): string {
+    return this._id;
+  }
+
+  get data(): T {
+    return this._data;
+  }
+
+  toJSON() {
     return {
-      key: this._key,
-      id: this._id,
-      name: this._name,
-      description: this._description,
-      domain: this._domain,
+      id: this.id,
+      data: this.data,
     };
+  }
+
+  static fromTask(task: Task<unknown>): Task<unknown> {
+    return new Task<unknown>(task.data);
   }
 }

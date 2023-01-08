@@ -1,6 +1,6 @@
 import { Time } from './time';
 import { INTERVAL_TIME_SEPARATOR } from './constant/time.constant';
-import { WeekManagerError } from './error/week-manager.error';
+import { WeekDataStructureError } from './error/week-data-structure.error';
 import { TimeslotSerializable } from './type/timeslot.type';
 
 export class Timeslot {
@@ -12,7 +12,7 @@ export class Timeslot {
   constructor(value: TimeslotSerializable);
   constructor(value: Timeslot);
   constructor(valueOrStart: [Time, Time] | TimeslotSerializable | Timeslot | Time, valueEnd?: Time) {
-    const rangeError = new WeekManagerError(`Invalid Timeslot tuple, start cannot be after end.`, 'Timeslot');
+    const rangeError = new WeekDataStructureError(`Invalid Timeslot tuple, start cannot be after end.`, 'Timeslot');
 
     if (valueOrStart instanceof Timeslot) {
       this._start = valueOrStart._start;
@@ -63,14 +63,14 @@ export class Timeslot {
   static fromString(value: string): Timeslot {
     const rawTime = value.split(INTERVAL_TIME_SEPARATOR);
     if (rawTime.length !== 2) {
-      throw new WeekManagerError(value, 'Timeslot');
+      throw new WeekDataStructureError(value, 'Timeslot');
     }
     const [startRaw, endRaw] = rawTime;
 
     const start = Time.fromString(startRaw);
     const end = Time.fromString(endRaw);
 
-    if (start.isAfter(end)) throw new WeekManagerError(value, 'Timeslot');
+    if (start.isAfter(end)) throw new WeekDataStructureError(value, 'Timeslot');
     return new Timeslot({ start: start.toJSON(), end: end.toJSON() });
   }
 
@@ -140,7 +140,7 @@ export class Timeslot {
 
   static mergeTimeslotIntersection(container: Timeslot, timeslot: Timeslot): [Timeslot, Timeslot[]] {
     if (!container.overlaps(timeslot))
-      throw new WeekManagerError(`Cannot merge timeslots that do not overlap.`, 'Timeslot');
+      throw new WeekDataStructureError(`Cannot merge timeslots that do not overlap.`, 'Timeslot');
 
     if (container.contains(timeslot) || timeslot.contains(container)) {
       const containedTimeslot = container.contains(timeslot) ? timeslot : container;

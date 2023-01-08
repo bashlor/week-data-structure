@@ -1,7 +1,7 @@
 import { computeMinutes, totalMinutesToTimeHours, totalMinutesToTimeMinutes } from './util/time.util';
 import { MINUTES_DAY, TIME_SEPARATOR } from './constant/time.constant';
 import { TimeSerializable } from './type/time.type';
-import { WeekManagerError } from './error/week-manager.error';
+import { WeekDataStructureError } from './error/week-data-structure.error';
 import { parseIntegerOrThrow } from './util/function.util';
 
 export class Time {
@@ -101,19 +101,19 @@ export class Time {
 
   static fromString(value: string): Time {
     const splitRawTime = value.split(TIME_SEPARATOR);
-    if (splitRawTime.length !== 2) throw new WeekManagerError(value, 'Time');
+    if (splitRawTime.length !== 2) throw new WeekDataStructureError(value, 'Time');
 
     const [rawHours, rawMinutes] = splitRawTime;
 
     if (rawHours.length !== 2 || rawMinutes.length !== 2) {
-      throw new WeekManagerError(value, 'Time');
+      throw new WeekDataStructureError(value, 'Time');
     }
 
-    const hours = parseIntegerOrThrow(rawHours, new WeekManagerError(value, 'Time'));
-    const minutes = parseIntegerOrThrow(rawMinutes, new WeekManagerError(value, 'Time'));
+    const hours = parseIntegerOrThrow(rawHours, new WeekDataStructureError(value, 'Time'));
+    const minutes = parseIntegerOrThrow(rawMinutes, new WeekDataStructureError(value, 'Time'));
 
     if (hours < 0 || minutes < 0) {
-      throw new WeekManagerError(value, 'Time');
+      throw new WeekDataStructureError(value, 'Time');
     }
 
 

@@ -7,10 +7,11 @@ export interface TimeslotSerializable {
   end: TimeSerializable;
 }
 
-export interface TimeslotSerieOptions {
+export interface TimeslotSeriesOptions {
   allowTimeslotMerging?: boolean;
   defaultStartLimit?: Time;
   defaultEndLimit?: Time;
+  enforceOverlappingCheck?: boolean;
 }
 
 export function isSlotAvailable(slot: Timeslot, range: Timeslot, allowedMinutesOverflow: number): boolean {

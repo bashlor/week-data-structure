@@ -1,25 +1,25 @@
 import { Timeslot } from './timeslot';
 import { compareRanges } from './util/timeslot.util';
-import { TimeslotSerieSerializable } from './type/timeslot-series.type';
+import { TimeslotSeriesSerializable } from './type/timeslot-series.type';
 import { TIMESLOT_SERIES_SEPARATOR } from './constant/time.constant';
 import { Time } from './time';
-import { TimeslotSerializable, TimeslotSerieOptions } from './type/timeslot.type';
-import { WeekManagerError } from './error/week-manager.error';
+import { TimeslotSerializable, TimeslotSeriesOptions } from './type/timeslot.type';
+import { WeekDataStructureError } from './error/week-data-structure.error';
 import { mapToTimeslotSerieTuple } from './util/timeslot-series.util';
 
-export class TimeslotSerie extends Map<string, Timeslot> {
-  private readonly _options: TimeslotSerieOptions;
+export class TimeslotSeries extends Map<string, Timeslot> {
+  private readonly _options: TimeslotSeriesOptions;
 
   constructor(
-    value?: TimeslotSerieSerializable | Map<string, Timeslot> | TimeslotSerie | null,
-    options?: TimeslotSerieOptions,
+    value?: TimeslotSeriesSerializable | Map<string, Timeslot> | TimeslotSeries | null,
+    options?: TimeslotSeriesOptions,
   ) {
     if (value == null) {
       super();
       return;
     }
 
-    if (value instanceof TimeslotSerie || value instanceof Map) {
+    if (value instanceof TimeslotSeries || value instanceof Map) {
       super(value.entries());
       return;
     }
@@ -30,21 +30,21 @@ export class TimeslotSerie extends Map<string, Timeslot> {
       this._options = options;
       return;
     }
-    this._options = TimeslotSerie.getDefaultTimeslotSerieOptions();
+    this._options = TimeslotSeries.getDefaultTimeslotSeriesOptions();
   }
 
   // Getters
 
   get first(): Timeslot {
     if (this.toArray().length === 0) {
-      throw new WeekManagerError('Timeslot serie is empty', 'TimeslotSerie');
+      throw new WeekDataStructureError('Timeslot series is empty', 'TimeslotSeries');
     }
     return this.toArray()[0];
   }
 
   get last(): Timeslot {
     if (this.toArray().length === 0) {
-      throw new WeekManagerError('Timeslot serie is empty', 'TimeslotSerie');
+      throw new WeekDataStructureError('Timeslot series is empty', 'TimeslotSeries');
     }
     return this.toArray()[this.toArray().length - 1];
   }
@@ -55,55 +55,62 @@ export class TimeslotSerie extends Map<string, Timeslot> {
     value:
       | string[]
       | Array<Timeslot>
-      | TimeslotSerieSerializable
+      | TimeslotSeriesSerializable
       | Array<TimeslotSerializable>
       | Array<string | Timeslot | TimeslotSerializable>,
-    options?: TimeslotSerieOptions,
-  ): TimeslotSerie {
+    options?: TimeslotSeriesOptions,
+  ): TimeslotSeries {
     const mappedValues = Array.isArray(value)
       ? (value.map(mapToTimeslotSerieTuple as never) as unknown as readonly [string, Timeslot][])
       : value.timeslots.map(mapToTimeslotSerieTuple);
 
-    return new TimeslotSerie(new Map(mappedValues), {
-      ...TimeslotSerie.getDefaultTimeslotSerieOptions(),
+    return new TimeslotSeries(new Map(mappedValues), {
+      ...TimeslotSeries.getDefaultTimeslotSeriesOptions(),
       ...options,
-    }) as TimeslotSerie;
+    }) as TimeslotSeries;
   }
 
-  static fromString<T>(value: string, data?: T, options?: TimeslotSerieOptions): TimeslotSerie {
+  static fromString<T>(value: string, data?: T, options?: TimeslotSeriesOptions): TimeslotSeries {
     if (value.length === 0) {
-      throw new WeekManagerError(value, 'Day');
+      throw new WeekDataStructureError(value, 'Day');
     }
 
     const dayRangesRaw = value.split(TIMESLOT_SERIES_SEPARATOR);
 
-    const ranges: Array<TimeslotSerializable> = dayRangesRaw
-      .map((rangeRaw) => Timeslot.fromString(rangeRaw))
-      .sort(compareRanges)
-      .map((r) => r.toJSON());
-    const timeslotSerie = new TimeslotSerie(
-      { timeslots: ranges },
-      options ?? TimeslotSerie.getDefaultTimeslotSerieOptions(),
-    );
+    const ranges: Array<Timeslot> = dayRangesRaw.map((rangeRaw) => Timeslot.fromString(rangeRaw));
 
-    return timeslotSerie;
+    const someRangeOverlaps = ranges.some((range, index) => {
+      const otherRanges = ranges.slice(index + 1);
+      return otherRanges.some((otherRange) => otherRange.overlaps(range));
+    });
+
+    if (someRangeOverlaps) {
+      throw new WeekDataStructureError(
+        'Failed to create TimeslotSeries from string. Some values are overlapping.',
+        'TimeslotSeries',
+      );
+    }
+
+    ranges.sort(compareRanges).map((r) => r.toJSON());
+    return new TimeslotSeries({ timeslots: ranges }, options ?? TimeslotSeries.getDefaultTimeslotSeriesOptions());
   }
 
   private static timeSlotOrString(timeslot: string | Timeslot): string {
     return typeof timeslot === 'string' ? timeslot : timeslot.toString();
   }
 
-  private static getDefaultTimeslotSerieOptions(): TimeslotSerieOptions {
+  private static getDefaultTimeslotSeriesOptions(): TimeslotSeriesOptions {
     return {
       allowTimeslotMerging: true,
       defaultStartLimit: Time.fromString('00:00'),
       defaultEndLimit: Time.fromString('23:59'),
+      enforceOverlappingCheck: false,
     };
   }
 
   // Methods
 
-  equals(that: TimeslotSerie): boolean {
+  equals(that: TimeslotSeries): boolean {
     return this.toString() === that.toString();
   }
 
@@ -112,13 +119,15 @@ export class TimeslotSerie extends Map<string, Timeslot> {
 
     const timeslots = [...super.values()];
 
-    const overlappedTimeslot = timeslots.find((savedTimeslot) => savedTimeslot.overlaps(timeslot));
-    if (overlappedTimeslot) {
-      throw new WeekManagerError(
+    if (this._options?.enforceOverlappingCheck) {
+      const overlappedTimeslot = timeslots.find((savedTimeslot) => savedTimeslot.overlaps(timeslot));
+
+      throw new WeekDataStructureError(
         `Cannot add ${timeslot.toString()}, it overlaps with ${overlappedTimeslot.toString()}`,
-        'TimeslotSerie',
+        'TimeslotSeries',
       );
     }
+
     if (typeof key === 'string') {
       // logic based on string time slot
       return super.set(key, timeslot);
@@ -156,18 +165,18 @@ export class TimeslotSerie extends Map<string, Timeslot> {
   }
 
   delete(timeslot: string | Timeslot): boolean {
-    return super.delete(TimeslotSerie.timeSlotOrString(timeslot));
+    return super.delete(TimeslotSeries.timeSlotOrString(timeslot));
   }
 
   replace(replace: string | Timeslot, timeslot: string | Timeslot): this {
-    const replaceString = TimeslotSerie.timeSlotOrString(replace);
+    const replaceString = TimeslotSeries.timeSlotOrString(replace);
     if (!this.has(replaceString) || this.has(timeslot.toString())) return this;
     this.delete(replaceString);
     return this.set(timeslot);
   }
 
   has(timeslot: Timeslot | string): boolean {
-    return super.has(TimeslotSerie.timeSlotOrString(timeslot));
+    return super.has(TimeslotSeries.timeSlotOrString(timeslot));
   }
 
   contains(value: Time | Timeslot): boolean;
@@ -194,7 +203,7 @@ export class TimeslotSerie extends Map<string, Timeslot> {
     return this.toArray().map((timeslot) => timeslot.toDate());
   }
 
-  toJSON(): TimeslotSerieSerializable {
+  toJSON(): TimeslotSeriesSerializable {
     return {
       timeslots: this.toArray().map((timeslot) => timeslot.toJSON()),
     };

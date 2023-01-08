@@ -1,10 +1,10 @@
 import { DayLabels, DayType, DayTypeEnum } from './type/date.type';
 import { Day } from './day';
 import { WeekParsable, WeekTuple } from './type/week.type';
-import { TimeslotSerie } from './timeslot-serie';
+import { TimeslotSeries } from './timeslot-series';
 import { WEEK_SEPARATOR } from './constant/time.constant';
 
-export class Week extends Map<DayType, Day> {
+export class Week extends Map<DayType, Day<unknown>> {
   constructor(value: Week);
   constructor(value: WeekParsable);
   constructor(value: WeekParsable | Week) {
@@ -15,37 +15,37 @@ export class Week extends Map<DayType, Day> {
 
     const temp = DayLabels.map((dayType) => {
       const timeslots = value[dayType] ?? [];
-      const day = Day.fromTimeslotSerie(new TimeslotSerie({ timeslots }), dayType);
+      const day = Day.fromTimeslotSeries(new TimeslotSeries({ timeslots }), dayType);
       return [dayType, day] as const;
     });
     super(new Map(temp));
   }
 
-  get monday(): Day {
+  get monday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.monday]);
   }
 
-  get tuesday(): Day {
+  get tuesday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.tuesday]);
   }
 
-  get wednesday(): Day {
+  get wednesday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.wednesday]);
   }
 
-  get thursday(): Day {
+  get thursday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.thursday]);
   }
 
-  get friday(): Day {
+  get friday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.friday]);
   }
 
-  get saturday(): Day {
+  get saturday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.saturday]);
   }
 
-  get sunday(): Day {
+  get sunday(): Day<unknown> {
     return this.get(DayLabels[DayTypeEnum.sunday]);
   }
 
@@ -61,7 +61,7 @@ export class Week extends Map<DayType, Day> {
     ];
   }
 
-  static fromDay(value: Day) {
+  static fromDay<T>(value: Day<T>) {
     return new Week({
       monday: value.toJSON().timeslots,
       tuesday: value.toJSON().timeslots,
@@ -73,22 +73,22 @@ export class Week extends Map<DayType, Day> {
     });
   }
 
-  emptyTimeslots(day?: DayType) {
+  getEmptyTimeslots(day?: DayType,extendToLimit = false) {
     if (day) {
-      return this[day].empty();
+      return this[day].getEmptyTimeslots(extendToLimit);
     }
     return {
-      monday: this.monday.empty(),
-      tuesday: this.tuesday.empty(),
-      wednesday: this.wednesday.empty(),
-      thursday: this.thursday.empty(),
-      friday: this.friday.empty(),
-      saturday: this.saturday.empty(),
-      sunday: this.sunday.empty(),
+      monday: this.monday.getEmptyTimeslots(extendToLimit),
+      tuesday: this.tuesday.getEmptyTimeslots(extendToLimit),
+      wednesday: this.wednesday.getEmptyTimeslots(extendToLimit),
+      thursday: this.thursday.getEmptyTimeslots(extendToLimit),
+      friday: this.friday.getEmptyTimeslots(extendToLimit),
+      saturday: this.saturday.getEmptyTimeslots(extendToLimit),
+      sunday: this.sunday.getEmptyTimeslots(extendToLimit),
     };
   }
 
-  static fromTimeslotSerie(value: TimeslotSerie): Week {
+  static fromTimeslotSeries(value: TimeslotSeries): Week {
     return new Week({
       monday: value.toJSON().timeslots,
       tuesday: value.toJSON().timeslots,
@@ -106,10 +106,10 @@ export class Week extends Map<DayType, Day> {
       .join(WEEK_SEPARATOR);
   }
 
-  get(key: DayType): Day {
+  get(key: DayType): Day<unknown> {
     const value = super.get(key);
     if (value === null) {
-      const day = Day.fromTimeslotSerie(new TimeslotSerie({ timeslots: [] }), key);
+      const day = Day.fromTimeslotSeries(new TimeslotSeries({ timeslots: [] }), key);
 
       super.set(key, day);
 
@@ -118,7 +118,7 @@ export class Week extends Map<DayType, Day> {
     return value;
   }
 
-  set(key: DayType, value: Day): this {
+  set(key: DayType, value: Day<unknown>): this {
     super.set(key, value);
     return this;
   }
