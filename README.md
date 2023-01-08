@@ -49,7 +49,7 @@ npm run test
 
 ## 🤝 Contributing
 
-Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/bashlor/week-data-structure/issues). You can also take a look at the [contributing guide](https://github.com/bashlor/Week-Data-Structure/blob/master/CONTRIBUTING.md).
+Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/bashlor/week-data-structure/issues).
 
 ## Show your support
 
