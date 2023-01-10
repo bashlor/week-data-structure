@@ -1,0 +1,43 @@
+name: Publish documentation on Github Pages
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ node-version }}
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: npm install
+      - run: npm run docs
+      - name: Cache built documentation
+        uses: actions/cache@v2
+        with:
+          path: docs
+          key: ${{ runner.os }}-docs-${{ hashFiles('**/docs/*') }}
+  deploy_doc:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ secrets.DOCS_URL }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Restore cache
+        uses: actions/cache@v2
+        with:
+          path: docs
+          key: ${{ runner.os }}-docs-${{ hashFiles('**/docs/*') }}
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+        with:
+          target-branch: gh-pages
+          publish-dir: docs
