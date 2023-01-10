@@ -29,7 +29,7 @@ jobs:
       id-token: write
     environment:
       name: github-pages
-      url: ${{ secrets.DOCS_URL }}
+      url: ${{ env.DOCS_URL }}
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v2
