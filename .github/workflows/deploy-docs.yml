@@ -15,11 +15,11 @@ jobs:
           node-version: 16
       - run: npm install
       - run: npm run docs
-      - name: Cache built documentation
-        uses: actions/cache@v2
+      - name: Save built documentation as an artifact
+        uses: actions/upload-artifact@v2
         with:
+          name: docs
           path: docs
-          key: ${{ runner.os }}-docs-${{ hashFiles('**/docs/*') }}
   deploy_doc:
     needs: build
     permissions:
@@ -30,14 +30,13 @@ jobs:
       url: ${{ secrets.DOCS_URL }}
     runs-on: ubuntu-latest
     steps:
-      - name: Restore cache
-        uses: actions/cache@v2
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
         with:
-          path: docs
-          key: ${{ runner.os }}-docs-${{ hashFiles('**/docs/*') }}
+          name: docs
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          target-branch: gh-pages
+          target-branch: main
           publish-dir: docs
