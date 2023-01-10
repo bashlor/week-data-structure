@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ node-version }}
       - uses: actions/setup-node@v3
@@ -16,7 +17,7 @@ jobs:
       - run: npm install
       - run: npm run docs
       - name: Save built documentation as an artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: docs
           path: docs
@@ -31,7 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: docs
       - name: Deploy to GitHub Pages
