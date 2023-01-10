@@ -45,7 +45,12 @@ npm run test
 
 👤 **Elie Samuel**
 
-* Github: [@bashlor](https://github.com/bashlor)
+Github: [@bashlor](https://github.com/bashlor)
+
+## 📚 Documentation
+
+Retrieve the wiki [here](https://github.com/bashlor/week-data-structure/blob/docs/improve_doc/doc/wiki.md).
+
 
 ## 🤝 Contributing
 
