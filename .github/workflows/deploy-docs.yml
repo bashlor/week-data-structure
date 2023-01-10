@@ -5,13 +5,13 @@ on:
       - main
 
 jobs:
-  build:
+  build_and_save_docs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-      - uses: actions/checkout@v3
-      - name: Use Node.js ${{ node-version }}
-      - uses: actions/setup-node@v3
+        uses: actions/checkout@v3
+      - name: Set-up Node
+        uses: actions/setup-node@v3
         with:
           node-version: 16
       - run: npm install
@@ -19,5 +19,25 @@ jobs:
       - name: Save built documentation as an artifact
         uses: actions/upload-artifact@v3
         with:
+            name: docs
+            path: docs
+  deploy_doc:
+    needs: build_and_save_docs
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ secrets.DOCS_URL }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
           name: docs
-          path: docs
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
+        with:
+          target-branch: main
+          publish-dir: docs
