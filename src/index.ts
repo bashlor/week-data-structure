@@ -5,8 +5,10 @@ export { Timeslot } from './timeslot';
 export { Task } from './task';
 export { Day } from './day';
 
-export { DayType } from './type/date.type';
-export { WeekParsable, WeekSerializable, WeekTuple } from './type/week.type';
-export { TimeslotSeriesOptions } from './type/timeslot.type';
-export { TimeSerializable } from './type/time.type';
-export { DayParsable, DaySerializable, DayToStringOptions } from './type/day.type';
+export * from './type/date.type';
+export * from './type/day.type';
+export * from './type/error.type';
+export * from './type/time.type';
+export * from './type/timeslot.type';
+export * from './type/timeslot-series.type';
+export * from './type/week.type';
