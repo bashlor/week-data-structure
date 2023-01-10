@@ -38,5 +38,5 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          target-branch: main
+          target-branch: docs
           publish-dir: docs
