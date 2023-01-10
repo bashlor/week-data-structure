@@ -274,7 +274,7 @@ export class TimeslotSeries extends Map<string, Timeslot> {
 
   /**
    * Returns the string representation of this TimeslotSeries.
-   * The string representation is a list of timeslots separated by a `TIMESLOT_SERIES_SEPARATOR` string.
+   * The string representation is a list of timeslots separated by a `,` string.
    *
    * @return {string} The string representation of this TimeslotSeries.
    */
@@ -286,7 +286,7 @@ export class TimeslotSeries extends Map<string, Timeslot> {
 
   /**
    * Returns the localized string representation of this TimeslotSeries.
-   * The string representation is a list of timeslots separated by a `TIMESLOT_SERIES_SEPARATOR` string.
+   * The string representation is a list of timeslots separated by a `,` string.
    *
    * @return {string} The localized string representation of this TimeslotSeries.
    */
