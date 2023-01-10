@@ -21,23 +21,3 @@ jobs:
         with:
           name: docs
           path: docs
-  deploy_doc:
-    needs: build
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ secrets.DOCS_URL }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifacts
-        uses: actions/download-artifact@v3
-        with:
-          name: docs
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
-        with:
-          target-branch: docs
-          publish-dir: docs
